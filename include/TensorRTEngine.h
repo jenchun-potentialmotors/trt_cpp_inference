@@ -1,6 +1,5 @@
-#ifndef TENSORRTENGINE_H
-#define TENSORRTENGINE_H
-
+/* Copyright 2025 Potential Motors.
+  @authors {Jen-Chun Wang} */
 #include "Inference.h"
 #include "InferenceEngine.h"
 #include "Tensor.h"
@@ -56,5 +55,3 @@ private:
 };
 
 } // namespace oros
-
-#endif // TENSORRTENGINE_H

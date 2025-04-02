@@ -1,3 +1,5 @@
+/* Copyright 2025 Potential Motors.
+  @authors {Jen-Chun Wang} */
 #include "TensorRTEngine.h"
 #include <cstring>
 #include <fstream>
