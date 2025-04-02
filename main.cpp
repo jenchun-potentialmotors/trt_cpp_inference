@@ -1,6 +1,6 @@
-#include "include/Image.h"
-#include "include/Tensor.h"
-#include "include/TensorRTEngine.h"
+#include "Image.h"
+#include "Tensor.h"
+#include "TensorRTEngine.h"
 #include <chrono>
 #include <filesystem>
 #include <fstream>

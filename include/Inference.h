@@ -4,7 +4,7 @@
 #include <cstdint>
 #include <filesystem>
 #include <memory>
-#include "../include/Tensor.h"
+#include "Tensor.h"
 
 namespace oros {
 

@@ -1,6 +1,6 @@
 /* Copyright 2023 Potential Motors.
   @authors {Vincius de A. Lima} */
-#include "../include/Image.h"
+#include "Image.h"
 #include <opencv2/opencv.hpp>
 
 namespace oros {

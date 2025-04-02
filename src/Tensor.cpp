@@ -1,7 +1,7 @@
 /* Copyright 2024 Potential Motors.
   @authors {Vinicius de A. Lima} */
-#include "../include/Tensor.h"
-#include "../include/Image.h"
+#include "Tensor.h"
+#include "Image.h"
 #include <vector>
 
 namespace {

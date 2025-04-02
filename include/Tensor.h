@@ -1,7 +1,7 @@
 /* Copyright 2024 Potential Motors.
   @authors {Vinicius de A. Lima} */
 #pragma once
-#include "../include/Image.h"
+#include "Image.h"
 #include <array>
 #include <cinttypes>
 #include <memory>

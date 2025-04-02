@@ -1,7 +1,7 @@
 /* Copyright 2023 Potential Motors.
   @authors {Vinicius de A. Lima} */
 #pragma once
-#include "../include/Tensor.h"
+#include "Tensor.h"
 
 namespace oros {
 

@@ -1,9 +1,9 @@
 #ifndef TENSORRTENGINE_H
 #define TENSORRTENGINE_H
 
-#include "../include/Inference.h"
-#include "../include/InferenceEngine.h"
-#include "../include/Tensor.h"
+#include "Inference.h"
+#include "InferenceEngine.h"
+#include "Tensor.h"
 #include "NvInfer.h"
 #include "cuda_runtime_api.h"
 #include <filesystem>

@@ -3,15 +3,15 @@
 #include <stdexcept>
 #include <memory>
 #include <string>
-#include "../include/Inference.h"
-#include "../include/Tensor.h"
-#include "../include/InferenceEngine.h"
+#include "Inference.h"
+#include "Tensor.h"
+#include "InferenceEngine.h"
 // #include "src/ai/OnnxRuntimeEngine.h"
 // #ifdef ENABLE_TFLITE
 // #include "src/ai/TfLiteEngine.h"
 // #endif
 #ifdef ENABLE_TENSORRT
-#include "../include/TensorrtEngine.h"
+#include "TensorrtEngine.h"
 #endif
 
 namespace {
