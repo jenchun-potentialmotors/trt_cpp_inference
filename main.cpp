@@ -1,6 +1,6 @@
 #include "include/Image.h"
 #include "include/Tensor.h"
-#include "include/TensorRTEngine.h" // 添加 TensorRTEngine 的標頭檔
+#include "include/TensorRTEngine.h"
 #include <chrono>
 #include <filesystem>
 #include <fstream>
@@ -14,6 +14,40 @@ namespace ModelData {
 const std::string ENGINE_PATH = "best.trt";
 }
 
+struct DeciderInput {
+
+  /** The output of a inference model. */
+  oros::Tensor tensor;
+
+};
+
+struct Decision {
+
+  /** Value mapping the state to switch to. */
+  uint32_t value;
+
+};
+
+class Decider {
+public:
+  virtual Decision decide(const DeciderInput&) = 0;
+};
+
+class ArgmaxDecider : public Decider
+{
+public:
+  /** @return decision will be the class with the highest probability. */
+  Decision decide(const DeciderInput&) override;
+};
+
+Decision ArgmaxDecider::decide(const DeciderInput& inp)
+{
+  auto it_max = std::max_element(inp.tensor.begin(), inp.tensor.end());
+  uint32_t argmax = std::distance(inp.tensor.begin(), it_max);
+  return Decision{argmax};
+}
+
+
 int main(int argc, char *argv[]) {
   if (argc < 3) {
     std::cerr << "Usage: " << argv[0] << " <engine_path> <annotation_file>"
@@ -24,10 +58,19 @@ int main(int argc, char *argv[]) {
   std::string engine_path = argv[1];
   std::string ann_path = argv[2];
 
-  TensorrtEngine trtInference(engine_path);
-  if (!trtInference.initialize()) {
-    return -1;
-  }
+  auto option = oros::Inference::Options(
+    engine_path,
+    oros::Inference::Options::Engine::tensorrt,
+    oros::Inference::Options::Device::gpu,
+    oros::Inference::Options::Threads{1,1}
+  );
+
+  oros::TensorrtEngine trtInference(option);
+  // if (!trtInference.initialize()) {
+  //   return -1;
+  // }
+
+  auto decider = ArgmaxDecider();
 
   std::ifstream ann_file(ann_path);
   if (!ann_file.is_open()) {
@@ -65,32 +108,41 @@ int main(int argc, char *argv[]) {
     oros_image = oros_image.resize(298, 168);
     auto tensor = oros::Tensor(oros_image, {123.675f, 116.28f, 103.53f},
                                {58.395f, 57.12f, 57.375f});
-    auto buffer = static_cast<std::vector<float>>(tensor);
-
-    std::vector<float> outputs;
+    // auto buffer = static_cast<std::vector<float>>(tensor);
 
     auto start = std::chrono::high_resolution_clock::now();
-    if (!trtInference.executeInference(buffer, outputs)) {
-      std::cerr << "Error: Inference failed for image: " << image_path
-                << std::endl;
-      continue;
-    }
+    auto probabilities = trtInference.infer(tensor);
+    // try {
+    //   oros::Tensor probabilities = trtInference.infer(tensor);
+    //   // std::vector<float> outputs(output_tensor.data<float>(), output_tensor.data<float>() + output_tensor.size());
+    // } catch (const std::exception &e) {
+    //   std::cerr << "Error: Inference failed for image: " << image_path << ", Error: " << e.what() << std::endl;
+    //   continue;
+    // }
+
     auto end = std::chrono::high_resolution_clock::now();
     double inferenceTime =
         std::chrono::duration<double, std::milli>(end - start).count();
     totalInferenceTime += inferenceTime;
 
-    auto maxElementPtr = std::max_element(outputs.begin(), outputs.end());
-    int maxIndex = std::distance(outputs.begin(), maxElementPtr);
-    float maxValue = *maxElementPtr;
+    // auto maxElementPtr = std::max_element(outputs.begin(), outputs.end());
+    // int maxIndex = std::distance(outputs.begin(), maxElementPtr);
+    // float maxValue = *maxElementPtr;
 
     std::filesystem::path image_file_path(image_path);
     std::string image_name = image_file_path.filename().string();
 
+    std::cout << "probabilities:\n";
+    for(const auto& prob : probabilities)
+      std::cout << prob << " ";
+    std::cout << std::endl << std::endl;
+    auto decision = decider.decide(DeciderInput{probabilities});
+    auto maxIndex = decision.value;
+
     std::cout << std::left << std::setw(60) << image_name << std::right
               << std::setw(10) << label << std::right << std::setw(10)
               << maxIndex << std::right << std::setw(15) << std::fixed
-              << std::setprecision(4) << maxValue << std::right << std::setw(20)
+              // << std::setprecision(4) << maxValue << std::right << std::setw(20)
               << std::fixed << std::setprecision(2) << inferenceTime
               << std::endl;
 

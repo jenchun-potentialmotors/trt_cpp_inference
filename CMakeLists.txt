@@ -25,7 +25,13 @@ include_directories(
 )
 
 # Add the source files
-add_executable(trt_inference main.cpp src/Image.cpp src/Tensor.cpp src/TensorRTEngine.cpp)
+add_executable(trt_inference
+    main.cpp
+    src/Image.cpp
+    src/Inference.cpp
+    src/Tensor.cpp 
+    src/TensorRTEngine.cpp
+)
 
 # Link the required libraries
 target_link_libraries(trt_inference
