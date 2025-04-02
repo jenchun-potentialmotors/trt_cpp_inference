@@ -7,10 +7,6 @@ project(TensorrtEngine VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Set paths to CUDA, and OpenCV
-set(CUDA_TOOLKIT_ROOT_DIR /usr/local/cuda-11.4/)
-set(OpenCV_DIR /usr/lib/aarch64-linux-gnu/)
-
 # Find CUDA
 find_package(CUDA REQUIRED)
 
