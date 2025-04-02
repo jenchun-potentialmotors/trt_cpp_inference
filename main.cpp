@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   std::string engine_path = argv[1];
   std::string ann_path = argv[2];
 
-  TensorRTInference trtInference(engine_path);
+  TensorrtEngine trtInference(engine_path);
   if (!trtInference.initialize()) {
     return -1;
   }

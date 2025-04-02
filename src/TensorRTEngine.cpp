@@ -38,7 +38,7 @@ CudaMemory::allocateHost(size_t size) {
       });
 }
 
-TensorRTInference::TensorRTInference(const std::string &enginePath)
+TensorrtEngine::TensorrtEngine(const std::string &enginePath)
     : enginePath_(enginePath), runtime_(createInferRuntime(logger),
                                         [](IRuntime *runtime) {
                                           if (runtime)
@@ -56,9 +56,9 @@ TensorRTInference::TensorRTInference(const std::string &enginePath)
                }),
       stream_(nullptr) {}
 
-TensorRTInference::~TensorRTInference() { cleanup(); }
+TensorrtEngine::~TensorrtEngine() { cleanup(); }
 
-bool TensorRTInference::initialize() {
+bool TensorrtEngine::initialize() {
   std::ifstream engineFile(enginePath_, std::ios::binary | std::ios::ate);
   bool engineExists = engineFile.good() && engineFile.tellg() > 0;
   engineFile.close();
@@ -92,7 +92,7 @@ bool TensorRTInference::initialize() {
   return true;
 }
 
-bool TensorRTInference::executeInference(const std::vector<float> &inputData,
+bool TensorrtEngine::executeInference(const std::vector<float> &inputData,
                                          std::vector<float> &outputData) {
   if (!engine_ || !context_) {
     std::cerr << "Engine or context not initialized." << std::endl;
@@ -125,7 +125,7 @@ bool TensorRTInference::executeInference(const std::vector<float> &inputData,
   return true;
 }
 
-bool TensorRTInference::loadEngine() {
+bool TensorrtEngine::loadEngine() {
   std::ifstream file(enginePath_, std::ios::binary);
   if (!file.good()) {
     std::cerr << "Error opening engine file: " << enginePath_ << std::endl;
@@ -151,7 +151,7 @@ bool TensorRTInference::loadEngine() {
   return true;
 }
 
-size_t TensorRTInference::getDataTypeSize(DataType dtype) {
+size_t TensorrtEngine::getDataTypeSize(DataType dtype) {
   switch (dtype) {
   case DataType::kFLOAT:
     return 4;
@@ -166,7 +166,7 @@ size_t TensorRTInference::getDataTypeSize(DataType dtype) {
   }
 }
 
-bool TensorRTInference::allocateBuffers() {
+bool TensorrtEngine::allocateBuffers() {
   int nbBindings = engine_.get()->getNbIOTensors();
   bindings_.resize(nbBindings);
   inputBuffers_.resize(0);
@@ -204,7 +204,7 @@ bool TensorRTInference::allocateBuffers() {
   return true;
 }
 
-void TensorRTInference::setTensorAddresses() {
+void TensorrtEngine::setTensorAddresses() {
   for (size_t i = 0; i < bindings_.size(); i++) {
     const char *tensorName = engine_.get()->getIOTensorName(i);
     context_.get()->setTensorAddress(tensorName, bindings_[i]);
@@ -212,7 +212,7 @@ void TensorRTInference::setTensorAddresses() {
   }
 }
 
-void TensorRTInference::cleanup() {
+void TensorrtEngine::cleanup() {
   if (stream_)
     cudaStreamDestroy(stream_);
 }

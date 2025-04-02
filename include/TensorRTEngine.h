@@ -23,10 +23,10 @@ public:
   allocateHost(size_t size);
 };
 
-class TensorRTInference {
+class TensorrtEngine {
 public:
-  TensorRTInference(const std::string &enginePath);
-  ~TensorRTInference();
+  TensorrtEngine(const std::string &enginePath);
+  ~TensorrtEngine();
 
   bool initialize();
   bool executeInference(const std::vector<float> &inputData,
