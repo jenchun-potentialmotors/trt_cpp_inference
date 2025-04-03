@@ -9,13 +9,14 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Find CUDA
 find_package(CUDA REQUIRED)
+message(STATUS "CUDA_INCLUDE_DIRS: ${CUDA_INCLUDE_DIRS}")
+message(STATUS "CUDA_LIBRARIES: ${CUDA_LIBRARIES}")
 
 # Find OpenCV
 find_package(OpenCV REQUIRED PATHS ${OpenCV_DIR})
 
 # Include directories
 include_directories(
-    ${CUDA_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
     ${PROJECT_SOURCE_DIR}/include/
 )
@@ -34,8 +35,4 @@ target_link_libraries(trt_inference
     ${CUDA_LIBRARIES}
     ${OpenCV_LIBS}
     nvinfer
-    nvparsers
-    nvinfer_plugin
-    cuda
-    stdc++
 )
